@@ -70,9 +70,9 @@ public class GerrymanderingComponent extends JComponent
      */
     private void promptForState()
     {
-        // TODO: implement method to meet requirements specified in the
-        //      above Javadoc comment
-
+        System.out.print("Which state would you like to look up?: ");
+        Scanner console = new Scanner(System.in);
+        this.selectedState = console.nextLine();
     }
 
     /**
