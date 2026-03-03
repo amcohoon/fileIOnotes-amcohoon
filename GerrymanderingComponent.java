@@ -70,6 +70,11 @@ public class GerrymanderingComponent extends JComponent
      */
     private void promptForState()
     {
+        System.out.println("This program allows you to search through");
+        System.out.println("data about congressional voting districts");
+        System.out.println("and determine whether a particular state is");
+        System.out.println("gerrymandered.");
+        System.out.println();
         System.out.print("Which state would you like to look up?: ");
         Scanner console = new Scanner(System.in);
         this.selectedState = console.nextLine();
@@ -87,22 +92,30 @@ public class GerrymanderingComponent extends JComponent
     private boolean getEligibleVoters()
     {
         boolean foundState = false;
-        
         try
         {
             File votersFile = new File("eligible_voters.txt");
             Scanner votersScanner = new Scanner(votersFile);
             votersScanner.useDelimiter("[\r\n,]+");
-            
-            // TODO: implement a looping structure to meet requirements
-            //      specified in the above Javadoc comment
-            
+            while((votersScanner.hasNext())&&(!foundState))
+            {
+                String stateName = votersScanner.next();
+                if(stateName.equalsIgnoreCase(this.selectedState))
+                {
+                    this.eligibleVoters = votersScanner.nextInt();
+                    foundState = true;
+                }
+                else if(votersScanner.hasNextInt())
+                {
+                    votersScanner.nextInt();
+                }
+            }
+            votersScanner.close();
         }
         catch(FileNotFoundException e)
         {
             System.out.println(e);
         }
-
         return foundState;
     }
 
@@ -123,6 +136,7 @@ public class GerrymanderingComponent extends JComponent
     {
         this.totalWastedDemocraticVotes = 0;
         this.totalWastedRepublicanVotes = 0;
+        int totalWastedOverall = 0;
         int numOfDistricts = 0;
 
         try
@@ -130,15 +144,41 @@ public class GerrymanderingComponent extends JComponent
             File districtFile = new File("districts.txt");
             Scanner districtsScanner = new Scanner(districtFile );
             districtsScanner.useDelimiter("[\r\n,]+");
-            
-            // TODO: implement looping structures to meet requirements
-            //      specified in the above Javadoc comment
-            
-            
-
-            // TODO: implement algorithm to determine if the specified state 
-            //      is gerrymandered
-            
+            boolean found = false;
+            while((districtsScanner.hasNext())&&(!found))
+            {
+                String name = districtsScanner.next();
+                if(name.equalsIgnoreCase(this.selectedState))
+                {
+                    found = true;
+                    while(districtsScanner.hasNextInt())
+                    {
+                        int num = districtsScanner.nextInt();
+                        int dem = districtsScanner.nextInt();
+                        int gop = districtsScanner.nextInt();
+                        this.addDistrictData(num,dem,gop);
+                        int totalInDistrict = dem+gop;
+                        int winThreshold = (totalInDistrict/2)+1;
+                        if(dem>gop)
+                        {
+                            this.totalWastedDemocraticVotes += dem - winThreshold;
+                            this.totalWastedRepublicanVotes += gop;
+                        }
+                        else
+                        {
+                            this.totalWastedDemocraticVotes = dem;
+                            this.totalWastedRepublicanVotes = gop - winThreshold;
+                        }
+                    }
+                }
+                else
+                {
+                    while(districtsScanner.hasNextInt())
+                    {
+                        districtsScanner.nextInt();
+                    }
+                }
+            }
         }
         catch(FileNotFoundException e)
         {
@@ -157,7 +197,6 @@ public class GerrymanderingComponent extends JComponent
     public void paintComponent(Graphics g)
     {
         Graphics2D g2 = (Graphics2D) g;
-
         this.drawTableHeader(g2);
         this.drawDistricts(g2);
     }
@@ -174,8 +213,8 @@ public class GerrymanderingComponent extends JComponent
      */
     private void addDistrictData(int districtNumber, int democraticVotes, int republicanVotes)
     {
-        // TODO: implement method to meet requirements specified in the
-        //      above Javadoc comment
+        District d = new District(districtNumber, democraticVotes, republicanVotes);
+        this.districts.add(d);
     }
 
     /**
