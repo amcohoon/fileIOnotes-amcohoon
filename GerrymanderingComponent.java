@@ -138,7 +138,6 @@ public class GerrymanderingComponent extends JComponent
         this.totalWastedRepublicanVotes = 0;
         int totalWastedOverall = 0;
         int numOfDistricts = 0;
-
         try
         {
             File districtFile = new File("districts.txt");
@@ -176,6 +175,24 @@ public class GerrymanderingComponent extends JComponent
                     while(districtsScanner.hasNextInt())
                     {
                         districtsScanner.nextInt();
+                    }
+                }
+            }
+            districtsScanner.close();
+            totalWastedOverall = this.totalWastedDemocraticVotes + this.totalWastedRepublicanVotes;
+            int districtCount = this.districts.size();
+            if(districtCount>=3)
+            {
+                int diff = Math.abs(this.totalWastedDemocraticVotes - this.totalWastedRepublicanVotes);
+                if((double)(diff)/totalWastedOverall>=0.07)
+                {
+                    if(this.totalWastedDemocraticVotes > this.totalWastedRepublicanVotes)
+                    {
+                        this.isGerrymanderedForRepublicans = true;
+                    }
+                    else
+                    {
+                        this.isGerrymanderedForDemocrats = true;
                     }
                 }
             }

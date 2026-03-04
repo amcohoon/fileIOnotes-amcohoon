@@ -16,7 +16,7 @@ public class District
         this.demVotes = democratVotes;
         this.gopVotes = republicanVotes;
     }
-    public int getDistrictNumber()
+    public int getNumber()
     {
         return this.number;
     }
@@ -28,7 +28,7 @@ public class District
     {
         return this.gopVotes;
     }
-    public int getAllVotes()
+    public int getTotalVotes()
     {
         return this.demVotes + this.gopVotes;
     }
