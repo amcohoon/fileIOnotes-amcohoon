@@ -165,8 +165,8 @@ public class GerrymanderingComponent extends JComponent
                         }
                         else
                         {
-                            this.totalWastedDemocraticVotes = dem;
-                            this.totalWastedRepublicanVotes = gop - winThreshold;
+                            this.totalWastedDemocraticVotes += dem;
+                            this.totalWastedRepublicanVotes += gop - winThreshold;
                         }
                     }
                 }
